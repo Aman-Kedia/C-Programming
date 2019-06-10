@@ -16,31 +16,47 @@ int max (int a, int b) {
 }
 
 //Declare your rectangle structure here!
-typedef struct rectangle_t{
+typedef struct {
   int x, y, width, height;
 }rectangle;
   
 
 rectangle canonicalize(rectangle r) {
   //WRITE THIS FUNCTION
-  if(r.x<0)
-    r.x = (-1)*r.x;
-  if(r.y<0)
-    r.y = (-1)*r.y;
-  if(r.width<0)
+  if(r.width<0){
+    r.x = r.x + r.width;
     r.width = (-1)*r.width;
-  if(r.height<0)
+  }
+  if(r.height<0){
+    r.y = r.y + r.height;
     r.height = (-1)*r.height;
+  }
   return r;
 }
 rectangle intersection(rectangle r1, rectangle r2) {
   //WRITE THIS FUNCTION
-  rectangle r;
-  r.x = max(r1.x, r2.x);
-  r.y = max(r1.y, r2.y);
-  r.width = min(r1.width, r2.width);
-  r.height = min(r1.height, r2.height);
-  return r1;
+  const rectangle EMPTY = {0, 0, 0, 0};
+
+  r1 = canonicalize(r1);
+  r2 = canonicalize(r2);
+
+  int x_left = max(r1.x, r2.x);
+  int x_right = min(r1.x + r1.width, r2.x + r2.width);
+  if(x_left > x_right){
+    return EMPTY;
+  }
+  int y_bottom = max(r1.y, r2.y);
+  int y_top = min(r1.y + r1.height, r2.y + r2.height);
+  if(y_bottom > y_top){
+    return EMPTY;
+  }
+  rectangle rect = {
+    x_left,
+    y_bottom,
+    x_right - x_left,
+    y_top - y_bottom
+  };
+  return rect;
 }
 
 //You should not need to modify any code below this line
